@@ -1,10 +1,11 @@
 --import Test.QuickCheck
 --All functions are intentionally written in prefix notation. One of the goals was to reduce the number of parenthesis, but haskell somehow still needs them at points it shouldn't
 
-
 --Exersize 1
 
 --a
+--At first, there was a more naive approach to find primes, but after the latest lecture and the later exersizes, we replaced it with a way that uses smaller primes to find new ones.
+primes :: [Integer]
 primes = 2 : filter (null . tail . primeFactors) [3,5..]
 
 primeFactors n = factor n primes
@@ -20,10 +21,10 @@ isPrime n = elem n primes
 listPrimes :: Int -> [Integer]
 listPrimes x = take x primes
 
---up to 2^15, the following is reasonably fast, above it takes forever.
+--up to 2^15, the following is reasonably fast, above that it takes forever.
 --b
-cntPrimes :: Integer -> Int
-cntPrimes x = length (listPrimes x)
+cntPrimes :: Int -> Int
+cntPrimes = length . listPrimes
 
 --c
 oddPspTO :: Integer -> Integer -> [Integer]
@@ -48,8 +49,6 @@ order a p = product [x | x <- primeFactors (p-1), notElem x (primeFactors a)]
 
 prop x y = ord1 x y == order x y
 
-factor :: Integer -> [Integer]
-factor n = [y | y <- listPrimes (div n 2), mod n y == 0]
 
 --oddPspTO :: Integer -> Integer -> [Integer]
 --oddPspTO a upb = 
