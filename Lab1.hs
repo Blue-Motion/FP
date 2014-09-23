@@ -11,19 +11,19 @@ primes = 2 : filter (null . tail . primeFactors) [3,5..]
 primeFactors n = factor n primes
   where
     factor n (p:ps) 
-        | p*p > n        = [n]
+        | p*p > n = [n]
         | mod n p == 0 = p : factor (div n p) (p:ps)
-        | otherwise      =     factor n ps
+        | otherwise = factor n ps
 
 isPrime :: Integer -> Bool
-isPrime n = elem n primes
+isPrime n = length (primeFactors n) == 1
 
-listPrimes :: Int -> [Integer]
-listPrimes x = take x primes
+listPrimes :: Integer -> [Integer]
+listPrimes x = takeWhile (< x) primes
 
---up to 2^15, the following is reasonably fast, above that it takes forever.
+--up to 2^20, the following is reasonably fast, above that it takes forever.
 --b
-cntPrimes :: Int -> Int
+cntPrimes :: Integer -> Int
 cntPrimes = length . listPrimes
 
 --c
@@ -45,7 +45,9 @@ ord1 a p = ord a (a `mod` p) 1 p
      where ord a e k p = if e == 1 then k else ord a (a*e `mod` p) (k+1) p
 
 order :: Integer -> Integer -> Integer
-order a p = product [x | x <- primeFactors (p-1), notElem x (primeFactors a)]
+order a p 
+      | odd (div (p-1) 2) = (product (tail [x | x <- primeFactors (p-1)]))
+      | otherwise = (product [x | x <- primeFactors (p-1)])
 
 prop x y = ord1 x y == order x y
 
