@@ -1,20 +1,24 @@
-import Test.QuickCheck
+--import Test.QuickCheck
 --All functions are intentionally written in prefix notation. One of the goals was to reduce the number of parenthesis, but haskell somehow still needs them at points it shouldn't
 
 
 --Exersize 1
 
 --a
+primes = 2 : filter (null . tail . primeFactors) [3,5..]
+
+primeFactors n = factor n primes
+  where
+    factor n (p:ps) 
+        | p*p > n        = [n]
+        | mod n p == 0 = p : factor (div n p) (p:ps)
+        | otherwise      =     factor n ps
+
 isPrime :: Integer -> Bool
-isPrime 1 = False
-isPrime 2 = True
-isPrime x = (&&) (odd x) (notElem True [divides x y | y <- [3,5..div x 2]])
+isPrime n = elem n primes
 
-divides :: Integer -> Integer -> Bool
-divides x y = (==) 0 (mod x y)
-
-listPrimes :: Integer -> [Integer]
-listPrimes x = 2:[y | y <- [3,5..x], isPrime y]
+listPrimes :: Int -> [Integer]
+listPrimes x = take x primes
 
 --up to 2^15, the following is reasonably fast, above it takes forever.
 --b
@@ -40,9 +44,14 @@ ord1 a p = ord a (a `mod` p) 1 p
      where ord a e k p = if e == 1 then k else ord a (a*e `mod` p) (k+1) p
 
 order :: Integer -> Integer -> Integer
-order a p = product [x | x <- factor (p-1), notElem x (factor a)]
+order a p = product [x | x <- primeFactors (p-1), notElem x (primeFactors a)]
 
 prop x y = ord1 x y == order x y
 
 factor :: Integer -> [Integer]
 factor n = [y | y <- listPrimes (div n 2), mod n y == 0]
+
+--oddPspTO :: Integer -> Integer -> [Integer]
+--oddPspTO a upb = 
+
+ 
