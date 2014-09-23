@@ -1,3 +1,4 @@
+import Test.QuickCheck
 --All functions are intentionally written in prefix notation. One of the goals was to reduce the number of parenthesis, but haskell somehow still needs them at points it shouldn't
 
 
@@ -39,6 +40,9 @@ ord1 a p = ord a (a `mod` p) 1 p
      where ord a e k p = if e == 1 then k else ord a (a*e `mod` p) (k+1) p
 
 order :: Integer -> Integer -> Integer
+order a p = product [x | x <- factor (p-1), notElem x (factor a)]
+
+prop x y = ord1 x y == order x y
 
 factor :: Integer -> [Integer]
 factor n = [y | y <- listPrimes (div n 2), mod n y == 0]
