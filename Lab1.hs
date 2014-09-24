@@ -15,6 +15,13 @@ primeFactors n = factor n primes
         | mod n p == 0 = p : factor (div n p) (p:ps)
         | otherwise = factor n ps
 
+divisors :: Integer -> [Integer]
+divisors n = rmdup (primeFactors n)
+	 where rmdup [] = []
+	       rmdup (f:fs)
+		| fs == [] = [f]
+		| otherwise =  f:(rmdup (dropWhile (==f) fs))
+
 isPrime :: Integer -> Bool
 isPrime n = length (primeFactors n) == 1
 
@@ -44,15 +51,19 @@ ord1 :: Integer -> Integer -> Integer
 ord1 a p = ord a (a `mod` p) 1 p
      where ord a e k p = if e == 1 then k else ord a (a*e `mod` p) (k+1) p
 
+--no clue what part of the subset is actually used, seems to be something with the product of the first prime and the product of the tail, but there is most of the time a (prime) factor difference between 0rd1 and order. It can't possibly be a permutation of the factors list because calculating permutaions takes way longer than just iterating over e.
 order :: Integer -> Integer -> Integer
 order a p 
-      | odd (div (p-1) 2) = (product (tail [x | x <- primeFactors (p-1)]))
-      | otherwise = (product [x | x <- primeFactors (p-1)])
-
+        | even (mod a p) = product (divisors (p-1))
+	| otherwise = product (tail  (divisors (p-1)))
+--
+--      | product f:fs == (p-1) = product f:(dropWhile (==f) fs) 
+--      | otherwise = product fs
+--      	where f:fs = primeFactors (p-1)
 prop x y = ord1 x y == order x y
+ 
 
-
---oddPspTO :: Integer -> Integer -> [Integer]
---oddPspTO a upb = 
+--oddPspTO2 :: Integer -> Integer -> [Integer]
+--oddPspTO2 a upb = [n | n <- [3,5..upb],  ]
 
  
