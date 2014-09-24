@@ -3,7 +3,7 @@ import Data.List
 
 -- Exercise 2
 mults :: Integer -> [Integer]
-mults n = [x * n | x <- [1..9]]
+mults n = [x * n | x <- [1..]]
 --
 multiples :: [Integer] -> [Integer]
 multiples [] = []
