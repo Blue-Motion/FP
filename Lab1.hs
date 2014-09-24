@@ -1,10 +1,15 @@
+-- Thom Carretero Seinhorst (s1898760)
+-- Bart Offereins (s2255243)
+
 --import Test.QuickCheck
 --All functions are intentionally written in prefix notation. One of the goals was to reduce the number of parenthesis, but haskell somehow still needs them at points it shouldn't
 
 --Exersize 1
 
 --a
---At first, there was a more naive approach to find primes, but after the latest lecture and the later exersizes, we replaced it with a way that uses smaller primes to find new ones.
+--At first, there was a more naive approach to find primes, but after 
+--the latest lecture and the later exersizes, we replaced it with a way 
+--that uses smaller primes to find new ones.
 primes :: [Integer]
 primes = 2 : filter (null . tail . primeFactors) [3,5..]
 
@@ -37,7 +42,7 @@ cntPrimes = length . listPrimes
 oddPspTO :: Integer -> Integer -> [Integer]
 oddPspTO a upb = [n | n <- [3,5..upb], a^(n-1) `mod` n == 1, not (isPrime n)]
 
---works somehow
+--d
 expmod :: Integer -> Integer -> Integer -> Integer
 expmod a e n
        | (==) e 1 = mod a n
@@ -51,7 +56,10 @@ ord1 :: Integer -> Integer -> Integer
 ord1 a p = ord a (a `mod` p) 1 p
      where ord a e k p = if e == 1 then k else ord a (a*e `mod` p) (k+1) p
 
---no clue what part of the subset is actually used, seems to be something with the product of the first prime and the product of the tail, but there is most of the time a (prime) factor difference between 0rd1 and order. It can't possibly be a permutation of the factors list because calculating permutaions takes way longer than just iterating over e.
+-- no clue what part of the subset is actually used, seems to be something with the product 
+-- of the first prime and the product of the tail, but there is most of the time 
+-- a (prime) factor difference between 0rd1 and order. It can't possibly be a permutation 
+-- of the factors list because calculating permutaions takes way longer than just iterating over e.
 order :: Integer -> Integer -> Integer
 order a p 
         | even (mod a p) = product (divisors (p-1))
