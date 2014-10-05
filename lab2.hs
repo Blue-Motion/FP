@@ -34,36 +34,22 @@ powers a = [a^n | n <- [2..]]
 
 --toDigits takes an integer and produces the digits of that integer in a list
 toDigits :: Integer -> [Integer]
-toDigits x = if x < 10 then [x] else toDigits (div x 10) ++ [(mod x 10)]
+toDigits x
+	 | x < 10 = [x]
+	 | otherwise = toDigits (div x 10) ++ [(mod x 10)]
 
 --ex5
 --als n groter is dan 10^d, dan kan je gewoon de bovenkant afkappen
 lastDigits :: Integer -> Integer -> [Integer]
 lastDigits n d = toDigits (mod (sum [ x^x | x <- [1..(mod n (10^d))]]) (10 ^ d))
-	   
+   
 
---ex6
---f :: Integer -> Integer
---f n = sum(map fac (toDigits n))
-
---s :: (Integer -> Integer) -> Integer -> Integer
---s fun = sum . toDigits . fun
-
---sf :: Integer -> Integer
---sf = sum . toDigits . f
---sf = s f
-
-
---g :: Integer -> Integer
---g i = head [x | x <- [1..], sf x == i]
-
---sg :: Integer -> Integer
---sg = s g
+--ex6 --complete
 
 sumsg :: Integer -> Integer
 sumsg n = sum (map sg [1..n])
       where
-	f n = sum(map fac (toDigits n)
+	f n = sum(map fac (toDigits n))
 	g i = head [x | x <- [1..], sf x == i]
 	s fun = sum . toDigits . fun
       	sg = s g
@@ -71,3 +57,10 @@ sumsg n = sum (map sg [1..n])
 
 fac :: Integer -> Integer
 fac n = product [1..n]
+
+--ex8
+type Sudoku = [String]
+
+--isCorrectSudoku :: Sudoku -> Boolean
+--isCorrectSudoku (x:xs)
+--	| 
