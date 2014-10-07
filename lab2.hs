@@ -32,8 +32,8 @@ powers :: Integer -> [Integer]
 powers a = [a^n | n <- [2..]]
 
 --zelfde als hierboven, dubbelen en volgorde, verder is het nog neit al te vlot, alhoewel hij wel volle bak aan het outputten is
-distinctPowers :: Integer -> Int -> [Integer]
-distinctPowers a b = concat (transpose (map ((take b) . powers) [2..a]))
+distinctPowers :: Integer -> Integer -> [Integer]
+distinctPowers a b = concat (transpose (map (take (fromInteger (b - a) + 1) . powers) [a..b]))
 
 --ex4
 --nothing yet
