@@ -7,8 +7,8 @@ smallestMultiple n = div (product [(h+1)..n]) (product [3..(h-1)])
 
 
 rmdups :: (Ord a) => [a] -> [a]
-rmdups = map head . group . quicksort
---rmdups = quicksort
+--rmdups = map head . group . quicksort
+rmdups = quicksort
 
 quicksort :: Ord a => [a] -> [a]
 quicksort []     = []
@@ -27,12 +27,10 @@ mults n = [x * n | x <- [1..]]
 
 --mults mappen op de lijst van input
 
-
 --ex2, concat is implemented as foldr ++ []
 --dubbelen moeten er nog uit. volgorde klopt ook niet.	Bovenstaande sort werkt niet, er moet een sort komen die oneindige lijsten kan handlen, zoiets als tijdens college behandeld	
 multiples :: [Integer] -> [Integer]
 multiples m = concat (transpose (map mults m))
-
 
 multsum :: Integer -> [Integer] -> Integer
 multsum n xs = sum (takeWhile (<n) (multiples xs))
@@ -42,9 +40,9 @@ powers :: Integer -> [Integer]
 powers a = [a^n | n <- [2..]]
 
 --zelfde als hierboven, dubbelen en volgorde, verder is het nog neit al te vlot, alhoewel hij wel volle bak aan het outputten is
-distinctPowers :: Integer -> Integer -> [Integer]
---distinctPowers a b = rmdups (concat (transpose (map (take (fromInteger (b - a) + 1) . powers) [a..b])))
-distinctPowers a b = rmdups (concat ( (map (take (fromInteger (b - a) + 1) . powers) [a..b])))
+distinctPowers :: Integer -> Int -> [Integer]
+--distinctPowers a b = concat (transpose (map ((take (b-1)) . powers) [2..a]))
+distinctPowers a b = quicksort ( concat (map ((take (b-1)) . powers) [2..a]))
 
 --ex4
 --nothing yet
