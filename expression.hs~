@@ -1,0 +1,19 @@
+module Expression where
+
+import Types
+
+data Expr =
+     Val Integer
+   | Var Name
+   | Expr :+: Expr
+   | Expr :-: Expr
+   | Expr :*: Expr
+   | Expr :/: Expr
+
+instance Show Expr where
+show Val Integer = show Integer
+show Val Name = show Name
+show Expr (:+:) Expr = show Expr + " + " + show Expr
+show Expr (:-:) Expr = show Expr + " - " + show Expr
+show Expr (:*:) Expr = show Expr + " * " + show Expr
+show Expr (:/:) Expr = show Expr + " / " + show Expr
