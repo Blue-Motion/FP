@@ -1,3 +1,4 @@
+import Data.List
 import Expression
 import Types
 
@@ -13,3 +14,10 @@ instance Show Expr where
 	show (e :*: e') = brac(show e ++ " * " ++ show e')
 	show (e :/: e') = brac(show e ++ " / " ++ show e')
 	show (e :%: e') = brac(show e ++ " % " ++ show e')
+	
+vars (Val a) = []
+vars (Var a) = [a]
+vars (a :+: b) = nub(vars a ++ vars b)
+vars (a :-: b) = nub(vars a ++ vars b)
+vars (a :*: b) = nub(vars a ++ vars b)
+vars (a :/: b) = nub(vars a ++ vars b)
