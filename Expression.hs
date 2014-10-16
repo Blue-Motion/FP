@@ -22,6 +22,7 @@ instance Show Expr where
   show (a :/: b) = "(" ++ show a ++ " / " ++ show b ++ ")"
   show (a :%: b) = "(" ++ show a ++ " % " ++ show b ++ ")"
 
+
 vars :: Expr -> [Name]
 vars = nub . sort . var
   where
