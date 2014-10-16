@@ -10,5 +10,6 @@ type Valuation = [(Name, Integer)]
 
 valuations :: [(Name,Domain)] -> [Valuation]
 valuations [] = []
---valuations ((n,d):nds) = ([(n,y) | y <- d])
-valuations v = [[((fst x),( head(snd x))) | x <- v]]
+--valuations ((x,y):xs) = [(x,v) | v <- y]:(valuations xs)
+--valuations xs = [[((fst n),v) | v <- (snd n)] | n <- xs] 
+valuations xs = [[((map fst xs),v) | v <- (concat (map snd xs))] | n <- xs] 
