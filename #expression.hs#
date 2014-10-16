@@ -25,3 +25,4 @@ vars (a :+: b) = (vars a)
 --vars (a :-: b) = vars a ++ vars b
 --vars (a :*: b) = vars a ++ vars b
 --vars (a :/: b) = vars a ++ vars b
+

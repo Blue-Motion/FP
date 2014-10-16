@@ -1,0 +1,4 @@
+Module Valuation(Valuation) where
+
+type Valuation = [(Name, Integer)]
+
