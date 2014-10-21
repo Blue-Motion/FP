@@ -1,8 +1,6 @@
 module Valuation(Valuation) where
 
 import Types
---import Data.List
---import Data.Tuple
 
 type Valuation = [(Name, Integer)]
 
