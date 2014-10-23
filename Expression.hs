@@ -1,6 +1,7 @@
 module Expression where
 
 import Types
+import Data.Char
 import Data.List
 import Valuation
 
@@ -23,6 +24,11 @@ instance Show Expr where
   show (a :/: b) = "(" ++ show a ++ " / " ++ show b ++ ")"
   show (a :%: b) = "(" ++ show a ++ " % " ++ show b ++ ")"
 
+instance Num Expr where
+	a + b = a :+: b
+	a - b = a :-: b
+	a * b = a :*: b
+	
 
 vars :: Expr -> [Name]
 vars = nub . sort . var
@@ -41,7 +47,7 @@ vars = nub . sort . var
 evalExpr :: Expr -> Valuation -> Integer
 evalExpr e v
 	 | ((length . vars) e) > (length v) = error "not enough valuated parameters"
-	 | otherwise = read (show (eval e v))
+	 | otherwise = eval e v
 	   where eval (Var x) v = head [snd n | n <- v, (fst n) == x] 
 	   	 eval (Val x) v = x
 		 eval (a :+: b) v = eval a v + eval b v
@@ -50,17 +56,65 @@ evalExpr e v
 		 eval (a :/: b) v = div (eval a v) (eval b v)
 		 eval (a :%: b) v = mod (eval a v) (eval b v)
 
---this cant be the right way, this takes >9000 patterns
+lexer :: String -> [String]
+lexer [] = []
+lexer (c:cs)
+	| elem c"+-*/%" = [c]:(lexer cs)
+	| elem c " " = lexer cs
+	| isAlpha c = (c:takeWhile isAlpha cs): lexer(dropWhile isAlpha cs)
+	| isDigit c = (c:takeWhile isDigit cs): lexer(dropWhile isDigit cs)
+	| otherwise = error "Syntax Error: invalid character in input"		 
+		 
+parser :: String -> (Expr,[String])
+parser str = parseE (lexer str)	
+
+parseE :: [String] -> (Expr,[String])
+parseE tokens = parseE' acc rest
+	where (acc, rest) = parseT tokens	 
+		 	 
+parseT :: [String] -> (Expr,[String])
+parseT tokens = parseT' acc rest
+	where (acc, rest) = parseF tokens	 
+		 	 
+parseE' :: Expr -> [String] -> (Expr,[String])
+parseE' accepted ("+":tokens) = parseE' (accepted :+: term) rest
+	where (term, rest) = parseT tokens
+parseE' accepted ("-":tokens) = parseE' (accepted :-: term) rest
+	where (term, rest) = parseT tokens
+parseE' accepted tokens = (accepted, tokens)
+
+parseT' :: Expr -> [String] -> (Expr,[String])
+parseT' accepted ("*":tokens) = parseT' (accepted :*: term) rest
+	where (term, rest) = parseF tokens
+parseT' accepted ("/":tokens) = parseT' (accepted :/: term) rest
+    where (term, rest) = parseF tokens
+parseT' accepted ("%":tokens) = parseT' (accepted :%: term) rest
+    where (term, rest) = parseF tokens
+parseT' accepted tokens =  (accepted, tokens)
+
+parseF :: [String] -> (Expr, [String])
+parseF [] = error "Parse error...abort"
+parseF (tok:tokens)
+	| tok == "("  		 = (expr, tail rest)
+	| isAlpha	(head tok) = (Var tok, tokens)
+	| isDigit	(head tok) = (Val (read tok), tokens)
+	| otherwise = error ("Syntax Error: " ++ tok)
+	where
+		(expr, rest) = parseE tokens
+
+toExpr :: String -> Expr
+toExpr str = fst (parser str)
+-- 		 
 simplifyExpr :: Expr -> Expr
 simplifyExpr ((Val a) :+: (Val b)) = Val (a + b)
 simplifyExpr ((Val a) :-: (Val b)) = Val (a - b)
 simplifyExpr ((Val a) :*: (Val b)) = Val (a * b)
 simplifyExpr ((Val a) :/: (Val b)) = Val (div a b)
 simplifyExpr ((Val a) :%: (Val b)) = Val (mod a b)
-simplifyExpr (a :+: b) = simplifyExpr (a :+: simplifyExpr b)
-simplifyExpr (a :-: b) = simplifyExpr (a :-: simplifyExpr b)
-simplifyExpr (a :*: b) = simplifyExpr (a :*: simplifyExpr b)
-simplifyExpr (a :/: b) = simplifyExpr (a :/: simplifyExpr b)
-simplifyExpr (a :%: b) = simplifyExpr (a :%: simplifyExpr b)
+simplifyExpr (a :+: b) = (a + simplifyExpr b)
+simplifyExpr (a :-: b) = (a - simplifyExpr b)
+simplifyExpr (a :*: b) = (a * simplifyExpr b)
+--simplifyExpr (a :/: b) = simplifyExpr (simplifyExpr a / simplifyExpr b)
+--simplifyExpr (a :%: b) = simplifyExpr (simplifyExpr a % simplifyExpr b)
 simplifyExpr a = a
 
