@@ -1,4 +1,4 @@
-module Expression where
+module Expression (Expr(Val, Var), toExpr) where
 
 import Types
 import Data.Char
@@ -28,6 +28,9 @@ instance Num Expr where
 	a + b = a :+: b
 	a - b = a :-: b
 	a * b = a :*: b
+	abs a = a
+	signum a = a
+	fromInteger a = Val a
 	
 
 vars :: Expr -> [Name]
@@ -104,6 +107,7 @@ parseF (tok:tokens)
 
 toExpr :: String -> Expr
 toExpr str = fst (parser str)
+
 -- 		 
 simplifyExpr :: Expr -> Expr
 simplifyExpr ((Val a) :+: (Val b)) = Val (a + b)
