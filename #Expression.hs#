@@ -41,14 +41,7 @@ vars = nub . sort . var
 evalExpr :: Expr -> Valuation -> Integer
 evalExpr e v
 	 | ((length . vars) e) > (length v) = error "not enough valuated parameters"
-	 | otherwise = read (show (eval e v))
-	   where eval (Var x) v = head [snd n | n <- v, (fst n) == x] 
-	   	 eval (Val x) v = x
-		 eval (a :+: b) v = eval a v + eval b v
-		 eval (a :-: b) v = eval a v - eval b v
-		 eval (a :*: b) v = eval a v * eval b v
-		 eval (a :/: b) v = div (eval a v) (eval b v)
-		 eval (a :%: b) v = mod (eval a v) (eval b v)
+	 | otherwise = 0
 
 --this cant be the right way, this takes >9000 patterns
 simplifyExpr :: Expr -> Expr
@@ -57,10 +50,10 @@ simplifyExpr ((Val a) :-: (Val b)) = Val (a - b)
 simplifyExpr ((Val a) :*: (Val b)) = Val (a * b)
 simplifyExpr ((Val a) :/: (Val b)) = Val (div a b)
 simplifyExpr ((Val a) :%: (Val b)) = Val (mod a b)
-simplifyExpr (a :+: b) = simplifyExpr (a :+: simplifyExpr b)
-simplifyExpr (a :-: b) = simplifyExpr (a :-: simplifyExpr b)
-simplifyExpr (a :*: b) = simplifyExpr (a :*: simplifyExpr b)
-simplifyExpr (a :/: b) = simplifyExpr (a :/: simplifyExpr b)
-simplifyExpr (a :%: b) = simplifyExpr (a :%: simplifyExpr b)
+simplifyExpr (a :+: b) = Var a :+: simplifyExpr b
+simplifyExpr (a :-: b) = Var a :-: simplifyExpr b
+simplifyExpr (a :*: b) = Var a :*: simplifyExpr b
+simplifyExpr (a :/: b) = Var a :/: simplifyExpr b
+simplifyExpr (a :%: b) = Var a :%: simplifyExpr b
 simplifyExpr a = a
 
