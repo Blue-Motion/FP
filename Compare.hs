@@ -1,24 +1,34 @@
 module Compare where
-
 import Expression
-import Data.List
+import Valuation
 
-data Relop = LessThan | LessEqual | Equal | GreaterEqual | Greater | NotEqual
+data Relop = LessThan | LessEqual | Equal | GreaterEqual | Greater | NotEqual deriving (Show)
+data Comparison = Cmp Relop Expr Expr deriving (Show)
 
-data Comparison = Cmp Relop Expr Expr deriving Show
-
-instance Show Relop where
-	 show LessThan = "<"
-	 show LessEqual =  "<="
-	 show Equal = "="
-	 show GreaterEqual = ">="
-	 show Greater = ">"
-	 show NotEqual = "#"
+comparisonOperator :: [Char] -> Relop
+comparisonOperator "<" = LessThan
+comparisonOperator "<=" = LessEqual
+comparisonOperator "=" = Equal
+comparisonOperator ">" = Greater
+comparisonOperator ">=" = GreaterEqual
+comparisonOperator "#" = NotEqual
 
 toComparison :: String -> Comparison
-toComparison s = Cmp LessThan (toExpr a) (toExpr a)
-	     where a = takeWhile (not (==(show Relop)) s)
+toComparison str = Cmp (comparisonOperator (getComparator str)) (toExpr(expression1 str)) (toExpr(expression2 str))
 
-toRelop :: String -> (Relop,String)
---torelop
-	     
+expression1 :: [Char] -> [Char]
+expression1 str = takeWhile (not.(\x -> elem x "<>=#")) str
+
+expression2 ::[Char] -> [Char]
+expression2 str = reverse (takeWhile (not.(\x -> elem x "<>=#")) (reverse str))
+
+getComparator:: [Char] -> [Char]
+getComparator str = (reverse (dropWhile (not.(\x -> elem x "<>=#")) (reverse (dropWhile (not.(\x -> elem x "<>=#")) str))))	     
+		 
+evalCmp :: Comparison -> Valuation -> Bool
+evalCmp (Cmp LessThan expression1 expression2) xs 		= (evalExpr expression1 xs) < 	(evalExpr expression2 xs)
+evalCmp (Cmp LessEqual expression1 expression2) xs 		= (evalExpr expression1 xs) <= (evalExpr expression2 xs)
+evalCmp (Cmp Equal expression1 expression2) xs 			= (evalExpr expression1 xs) == (evalExpr expression2 xs)
+evalCmp (Cmp Greater expression1 expression2) xs 		= (evalExpr expression1 xs) > 	(evalExpr expression2 xs)
+evalCmp (Cmp GreaterEqual expression1 expression2) xs 	= (evalExpr expression1 xs) >= (evalExpr expression2 xs)
+evalCmp (Cmp NotEqual expression1 expression2) xs 		= (evalExpr expression1 xs) /= (evalExpr expression2 xs)

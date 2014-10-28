@@ -1,4 +1,4 @@
-module Expression (Expr(Val, Var), toExpr) where
+module Expression(Expr, vars, evalExpr, toExpr, module Types, Valuation) where
 
 import Types
 import Data.Char
