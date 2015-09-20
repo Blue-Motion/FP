@@ -66,7 +66,7 @@ impOddPspTO a upb = [n | n <- [3,5..upb], (==) (expmod a ((-) n 1) n) 1, (not . 
 org_order :: Integer -> Integer -> Integer
 org_order a p = ord a (mod a p) 1 p
   where ord a e k p
-          | not (isPrime p) || a < 2 || a >= p = 0 --set bounds for quickcheck
+          | not (isPrime p) || a < 1 || a >= p = 0 --set bounds for quickcheck
           | e == 1 = k
           | otherwise = ord a (mod (a*e) p) (k+1) p
 
@@ -74,40 +74,31 @@ org_order a p = ord a (mod a p) 1 p
 --how to know what factors we need?
 order :: Integer -> Integer -> Integer
 order a p
-  | not (isPrime p) || a < 2  || a >= p = 0 --set bounds for quickcheck
-  | otherwise = ord a p (reverse (primeFactors (p-1)))
+  | not (isPrime p) || a < 1  || a >= p = 0 --set bounds for quickcheck
+  | otherwise = ord a p (productSet (primeFactors (p-1)))
   where ord a p (k:ks)
          | expmod a k p == 1 && ks == [] = k
-	 | expmod a k p == 1 = ord a p (k:(tail ks))
+         | expmod a k p == 1 = ord a p (k:(tail ks))
          | otherwise = ord a p ((k * head ks):tail ks)
+        productSet :: [Integer] -> [Integer]
+        productSet []     = [1]
+        productSet (x:xs) = merge (productSet xs) (map (*x) (productSet xs)) --for every factor, take the product with all factors and sort them into 1 list 
 
-prop_order a p = org_order a p == order a p
+merge :: [Integer] -> [Integer] -> [Integer]
+merge [] ys = ys
+merge xs [] = xs
+merge (x:xs) (y:ys)
+    | x == y    = merge (x:xs) ys
+    | x >  y    = y : merge (x:xs) ys
+    | otherwise = x : merge xs (y:ys)
 
-
-
-
-
-
-
+prop_order a p = ord1 a p == order a p
 
 ord1 :: Integer -> Integer -> Integer
-ord1 a p = ord a (a `mod` p) 1 p
-     where ord a e k p = if e == 1 then k else ord a (a*e `mod` p) (k+1) p
-
--- no clue what part of the subset is actually used, seems to be something with the product 
--- of the first prime and the product of the tail, but there is most of the time 
--- a (prime) factor difference between 0rd1 and order. It can't possibly be a permutation 
--- of the factors list because calculating permutaions takes way longer than just iterating over e.
---order :: Integer -> Integer -> Integer
---order a p 
---        | even (mod a p) = product (divisors (p-1))
---        | otherwise = product (tail  (divisors (p-1)))
---
---      | product f:fs == (p-1) = product f:(dropWhile (==f) fs) 
---      | otherwise = product fs
---      	where f:fs = primeFactors (p-1)
-prop x y = ord1 x y == order x y
- 
+ord1 a p
+   | not (isPrime p) || a < 1  || a >= p = 0 --set bounds for quickcheck
+   | otherwise = ord a (a `mod` p) 1 p
+      where ord a e k p = if e == 1 then k else ord a (a*e `mod` p) (k+1) p
 
 --oddPspTO2 :: Integer -> Integer -> [Integer]
 --oddPspTO2 a upb = [n | n <- [3,5..upb],  ]
