@@ -29,6 +29,7 @@ divisors n = rmdup (primeFactors n)
         | otherwise =  f:(rmdup (dropWhile (==f) fs))
 
 isPrime :: Integer -> Bool
+isPrime 0 = False
 isPrime n = length (primeFactors n) == 1
 
 listPrimes :: Integer -> [Integer]
@@ -64,15 +65,20 @@ impOddPspTO a upb = [n | n <- [3,5..upb], (==) (expmod a ((-) n 1) n) 1, (not . 
 
 org_order :: Integer -> Integer -> Integer
 org_order a p = ord a (mod a p) 1 p
-  where ord _ 1 k _ = k
-        ord a e k p = ord a (mod (a*e) p) (k+1) p
+  where ord a e k p
+          | not (isPrime p) || a < 2 || a >= p = 0 --set bounds for quickcheck
+          | e == 1 = k
+          | otherwise = ord a (mod (a*e) p) (k+1) p
 
 
 --how to know what factors we need?
 order :: Integer -> Integer -> Integer
-order a p = ord a p (filter (/=a ) (primeFactors (p-1)))
+order a p
+  | not (isPrime p) || a < 2  || a >= p = 0 --set bounds for quickcheck
+  | otherwise = ord a p (reverse (primeFactors (p-1)))
   where ord a p (k:ks)
-         | expmod a k p == 1 = k
+         | expmod a k p == 1 && ks == [] = k
+	 | expmod a k p == 1 = ord a p (k:(tail ks))
          | otherwise = ord a p ((k * head ks):tail ks)
 
 prop_order a p = org_order a p == order a p
