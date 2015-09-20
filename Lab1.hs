@@ -77,9 +77,8 @@ order a p
   | not (isPrime p) || a < 1  || a >= p = 0 --set bounds for quickcheck
   | otherwise = ord a p (productSet (primeFactors (p-1)))
   where ord a p (k:ks)
-         | expmod a k p == 1 && ks == [] = k
-         | expmod a k p == 1 = ord a p (k:(tail ks))
-         | otherwise = ord a p ((k * head ks):tail ks)
+         | expmod a k p == 1 = k
+         | otherwise = ord a p ks
         productSet :: [Integer] -> [Integer]
         productSet []     = [1]
         productSet (x:xs) = merge (productSet xs) (map (*x) (productSet xs)) --for every factor, take the product with all factors and sort them into 1 list 
