@@ -93,9 +93,17 @@ isPalindrome n = (reverse . show) n == show n
 --works like a charm, except a kill on calculating nsum, must be a shortcut
 lastDigits :: Integer -> Integer -> [Integer]
 lastDigits n d = lDig nsum d
-  where nsum = sum [x^x | x <- [1..n]]
-        lDig m 0 = []
+  where nsum = foldr (+) 0 [x^x | x <- [1..n]]
+        --trimexp _ 0 = 1
+	--trimexp a e = mod (a * (trimexp a (e-1))) (10^d)
+        lDig _ 0 = []
         lDig m e = (lDig (div m 10) (e-1)) ++ [(mod m 10)]
+
+--what the...! its even slower to trim the thing down to 10^d, probably because of recursion
+trimexp :: Integer -> Integer -> Integer
+trimexp _ 0 = 1
+trimexp a e = mod (a * (trimexp a (e-1))) (10^10)
+        
 
 --Ex6
 --Factorial sums
@@ -111,3 +119,17 @@ lastDigits n d = lDig nsum d
 
 fac :: Integer -> Integer
 fac n = product [1..n]
+
+--Ex7
+--Repetitive reciprocals
+maxRepRec :: Integer -> Integer -> Integer
+maxRepRec m n = 0
+
+repRec :: Integer -> Integer
+repRec n = findRep nList [] []
+  where findRep [] p r = []
+        findRep a p r
+	  | take rLen a == r = rLen + findRep (drop rLen a) p [r ++ r]
+	  | take (length p) nList == p = findRep (tail a) (head a) 
+        nList = show (1.0 / (fromIntegral n))
+	rLen = length r
