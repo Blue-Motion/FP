@@ -24,26 +24,16 @@ isPrime n = length (primeFactors n) == 1
 listPrimes :: Integer -> [Integer]
 listPrimes x = takeWhile (< x) primes
 
-sort :: Ord a => [a] -> [a]
-sort = inSort
+--merges 2 ordered lists, removing doubles
+--could maybe lose a pattern
 
---quicksort is no use at all, the list is sorted quite well beforehand
-quicksort :: Ord a => [a] -> [a]
-quicksort []     = []
-quicksort (p:xs) = (quicksort lesser) ++ [p] ++ (quicksort greater)
-    where
-        lesser  = filter (< p) xs
-	greater = filter (> p) xs
-
-inSort :: Ord a => [a] -> [a]
-inSort [] = []
-inSort (x:xs) = ins x (inSort xs)
-
-ins :: Ord a => a -> [a] -> [a]
-ins x []  =  [x]
-ins x (y:ys) | x <= y     =  x : y : ys
- | otherwise  =  y : ins x ys
-
+merge :: (Ord a) => [a] -> [a] -> [a]
+merge xs [] = xs
+merge [] ys = ys
+merge (x:xs) (y:ys)
+  | x == y = x : (merge xs ys)
+  | x < y = x : (merge xs (y:ys))
+  | otherwise = y : (merge (x:xs) ys)
 
 --Ex1
 --Smallest multiple
@@ -59,12 +49,11 @@ smallestMultiple n = div (prod [(h+1)..n]) (prod [3..(h-1)])
 mults :: Integer -> [Integer]
 mults n = [x * n | x <- [1..]]
 
---way to slow, need to find a heuristic for sorting
 multiples :: [Integer] -> [Integer]
-multiples m = sort (foldr (++) [] (map mults m))
+multiples m = foldr merge [] (map mults m)
 
 multsum :: Integer -> [Integer] -> Integer
-multsum n xs = sum (takeWhile (<n) (multiples xs))
+multsum n xs = foldr (+) 0 (takeWhile (<n) (multiples xs))
 
 --Ex3
 --Distinct powers
@@ -72,9 +61,8 @@ multsum n xs = sum (takeWhile (<n) (multiples xs))
 powers :: Integer -> [Integer]
 powers a = [a^n | n <- [2..]]
 
-distinctPowers :: Integer -> Int -> [Integer]
---distinctPowers a b = concat (transpose (map ((take (b-1)) . powers) [2..a]))
-distinctPowers a b =  foldr (++) [] (map ((take (b-1)) . powers) [2..a])
+distinctPowers :: Integer -> Int -> Int
+distinctPowers a b =  length (foldr merge [] (map ((take (b-1)) . powers) [2..a]))
 
 --Ex4
 --Palindromic composite
@@ -82,7 +70,7 @@ distinctPowers a b =  foldr (++) [] (map ((take (b-1)) . powers) [2..a])
 numberOfPalindromicComposites :: Integer -> Int
 numberOfPalindromicComposites n = length  (filter (isPalindromeBelow) (composites n))
   where isPalindromeBelow c = c<n && isPalindrome c
-        composites n = foldr (++) [] [map (*x) ps | x <- ps]
+        composites n = foldr merge [] [map (*x) ps | x <- ps]
         ps = listPrimes (div n 2)
 
 isPalindrome :: (Show a) => a -> Bool
@@ -125,11 +113,11 @@ fac n = product [1..n]
 maxRepRec :: Integer -> Integer -> Integer
 maxRepRec m n = 0
 
-repRec :: Integer -> Integer
-repRec n = findRep nList [] []
-  where findRep [] p r = []
-        findRep a p r
-	  | take rLen a == r = rLen + findRep (drop rLen a) p [r ++ r]
-	  | take (length p) nList == p = findRep (tail a) (head a) 
-        nList = show (1.0 / (fromIntegral n))
-	rLen = length r
+--repRec :: Integer -> Integer
+--repRec n = findRep nList [] []
+--  where findRep [] p r = []
+--        findRep a p r
+--	  | take rLen a == r = rLen + findRep (drop rLen a) p [r ++ r]
+--	  | take (length p) nList == p = findRep (tail a) (head a) 
+--        nList = show (1.0 / (fromIntegral n))
+--	rLen = 1
