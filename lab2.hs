@@ -85,8 +85,8 @@ isPalindrome n = show n == (reverse . show) n
 --Last n Digits
 --works like a charm, except a kill on calculating nsum, must be a shortcut
 lastDigits :: Integer -> Integer -> [Integer]
-lastDigits n d = toDigits nsum
-  where nsum = foldr (+) 0 ([expmod x x (10^d) | x <- [1..n]])
+lastDigits n d = drop 1 (toDigits nsum)
+  where nsum = foldr (+) 0 ([expmod x x (10^(d+1)) | x <- [1..n]])
 
 --http://hackage.haskell.org/package/hS3-0.5.8/docs/src/Codec-Encryption-RSA-NumberTheory.html
 expmod :: Integer -> Integer -> Integer -> Integer
@@ -128,3 +128,10 @@ maxRepRec m n = 0
 --	  | take (length p) nList == p = findRep (tail a) (head a) 
 --        nList = show (1.0 / (fromIntegral n))
 --	rLen = 1
+
+remPrefix :: Integer -> Int -> (String, String)
+remPrefix n i
+ | length nList == i = (nList,"")
+ | take i nList == drop i nList = ((take i nList),nList)
+ | otherwise = remPrefix n (i+1)
+ where nList = show (1.0 / (fromIntegral n))
