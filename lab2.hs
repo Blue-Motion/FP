@@ -84,8 +84,8 @@ isPalindrome n = show n == (reverse . show) n
 --Ex5
 --Last n Digits
 --works like a charm, except a kill on calculating nsum, must be a shortcut
-lastDigits :: Integer -> Integer -> [Integer]
-lastDigits n d = drop 1 (toDigits nsum)
+lastDigits :: Integer -> Int -> [Integer]
+lastDigits n d = drop (subtract d (length (toDigits nsum))) (toDigits nsum)
   where nsum = foldr (+) 0 ([expmod x x (10^(d+1)) | x <- [1..n]])
 
 --http://hackage.haskell.org/package/hS3-0.5.8/docs/src/Codec-Encryption-RSA-NumberTheory.html
