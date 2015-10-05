@@ -27,7 +27,7 @@
 
   \maketitle
   
-\section{Exercise 1}
+\section{Smallest multiple}
 \subsection{Problem}
 Find the smallest number that can be divided by each of the numbers from 1 to $n$ without any remainder.\\
 The function $smallestMultiple\: 10000$ should compute within one second.
@@ -44,7 +44,7 @@ smallestMultiple n = div (prod [(h+1)..n]) (prod [3..(h-1)])
 
 Runtime: 0.09 sec
 
-\section{Exercise 2}
+\section{Sum of multiples}
 \subsection{Problem}
 This problem is divided into three subproblems:\\
 1. write a function $mults$ with input positif $n$ value, that produces the infinite list of multiples of $n$\\
@@ -71,7 +71,7 @@ multsum n xs = foldr (+) 0 (takeWhile (<n) (multiples xs))
 
 Mults returns and infinite (ordered) list of multiples of x. Multiples maps this list to a list of inputs and generates the (ordered, infinite) lists for all elements. These lists are then ordered by merging them pairwise trough applying folder on merge. Returning an infinite ordered list of all multiples of the items of the input list, with duplicates removed. Multsum then takes as much elements as needed and computes the sum of the taken elements.
 
-\section{Exercise 3}
+\section{Distinct powers}
 \subsection{Problem}
 There are two subproblems:\\
 1. Create function $powers$ that takes as its input a positive integer $a$, and it produces the infinite
@@ -99,7 +99,7 @@ and $q$ are prime numbers.\\
 The time to compute $numberOfPalindromicComposites\: (10^8)$ using ghci should not exceed
 two seconds.
 
-\subsection{Solution}
+\subsection{Palindromic Composite}
 
 \begin{lstlisting}
 numberOfPalindromicComposites :: Integer -> Int
@@ -116,7 +116,7 @@ This solution relies heavily on the implementation of the function listPrimes. T
 
 \subsection{Proof}
 
-\section{Exercise 5}
+\section{Last n digits}
 \subsection{Problem}
 Write a Haskell function lastDigits n d that computes the list of the last $d$ digits of the number
 \begin{equation}
@@ -145,7 +145,7 @@ expmod a x m
 
 \subsection{Proof}
 
-\section{Exercise 6}
+\section{Factorial Sum}
 \subsection{Problem}
 
 \subsection{Solution}
@@ -166,26 +166,15 @@ fac n = foldr (*) 1 [1..n]
 
 \subsection{Proof}
 
-\section{Code}
+\section{Helper functions}
 
-\begin{lstlisting}
-primes :: [Integer]
-primes = 2 : filter ((==1) . length . primeFactors) [3,5..]
-\end{lstlisting}
+\subsection{listPrimes}
+Listprimes and functions needed for listPrimes are covered in the report of lab1.
 
-\begin{lstlisting}
-primeFactors n = factor n primes
-  where
-    factor n (p:ps) 
-      | p*p > n = [n]
-      | mod n p == 0 = p : factor (div n p) (p:ps)
-      | otherwise = factor n ps
-\end{lstlisting}
+\subsection{merge}
 
-\begin{lstlisting}
-listPrimes :: Integer -> [Integer]
-listPrimes x = takeWhile (< x) primes
-\end{lstlisting}
+Merge takes to ordered lists and and combines them into one ordered list, removing any duplicates.
+
 \begin{lstlisting}
 merge :: (Ord a) => [a] -> [a] -> [a]
 merge xs [] = xs
@@ -195,14 +184,17 @@ merge (x:xs) (y:ys)
   | x == y = x : (merge xs ys)
   | otherwise = y : (merge (x:xs) ys)
 \end{lstlisting}
+
+\subsection{toDigits}
+
+ToDigits takes and integer as an input and yield an Integer list of all digits form the input.
+
 \begin{lstlisting}
 toDigits :: Integer -> [Integer]
 toDigits x
 	 | x < 10 = [x]
 	 | otherwise = toDigits (div x 10) ++ [(mod x 10)]
 \end{lstlisting}
-
-
 
 
 \end{document}
