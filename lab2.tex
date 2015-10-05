@@ -166,26 +166,42 @@ fac n = foldr (*) 1 [1..n]
 
 \subsection{Proof}
 
-\section{Exercise 7}
-\subsection{Problem}
+\section{Code}
 
-\subsection{Solution}
+\begin{lstlisting}
+primes :: [Integer]
+primes = 2 : filter ((==1) . length . primeFactors) [3,5..]
+\end{lstlisting}
 
-\subsection{Proof}
+\begin{lstlisting}
+primeFactors n = factor n primes
+  where
+    factor n (p:ps) 
+      | p*p > n = [n]
+      | mod n p == 0 = p : factor (div n p) (p:ps)
+      | otherwise = factor n ps
+\end{lstlisting}
 
-\section{Exercise 8}
-\subsection{Problem}
+\begin{lstlisting}
+listPrimes :: Integer -> [Integer]
+listPrimes x = takeWhile (< x) primes
+\end{lstlisting}
+\begin{lstlisting}
+merge :: (Ord a) => [a] -> [a] -> [a]
+merge xs [] = xs
+merge [] ys = ys
+merge (x:xs) (y:ys)
+  | x < y = x : (merge xs (y:ys))
+  | x == y = x : (merge xs ys)
+  | otherwise = y : (merge (x:xs) ys)
+\end{lstlisting}
+\begin{lstlisting}
+toDigits :: Integer -> [Integer]
+toDigits x
+	 | x < 10 = [x]
+	 | otherwise = toDigits (div x 10) ++ [(mod x 10)]
+\end{lstlisting}
 
-\subsection{Solution}
-
-\subsection{Proof}
-
-\section{Exercise 9}
-\subsection{Problem}
-
-\subsection{Solution}
-
-\subsection{Proof}
 
 
 
