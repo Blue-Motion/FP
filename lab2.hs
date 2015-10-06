@@ -1,3 +1,6 @@
+-- Thom Carretero Seinhorst (s1898760)
+-- Bart Offereins (s2255243)
+
 --primes
 primes :: [Integer]
 primes = 2 : filter ((==1) . length . primeFactors) [3,5..]
