@@ -25,7 +25,6 @@ listPrimes x = takeWhile (< x) primes
 
 --merges 2 ordered lists, removing doubles
 --could maybe lose a pattern
-
 merge :: (Ord a) => [a] -> [a] -> [a]
 merge xs [] = xs
 merge [] ys = ys
@@ -50,7 +49,6 @@ smallestMultiple n = div (prod [(h+1)..n]) (prod [3..(h-1)])
 
 --Ex2
 --sum of multiples
-
 mults :: Integer -> [Integer]
 mults n = [x * n | x <- [1..]]
 
@@ -62,7 +60,6 @@ multsum n xs = foldr (+) 0 (takeWhile (<n) (multiples xs))
 
 --Ex3
 --Distinct powers
-
 powers :: Integer -> [Integer]
 powers a = [a^n | n <- [2..]]
 
@@ -83,7 +80,6 @@ isPalindrome n = show n == (reverse . show) n
 
 --Ex5
 --Last n Digits
---works like a charm, except a kill on calculating nsum, must be a shortcut
 lastDigits :: Integer -> Int -> [Integer]
 lastDigits n d = drop (subtract d (length (toDigits nsum))) (toDigits nsum)
   where nsum = foldr (+) 0 ([expmod x x (10^(d+1)) | x <- [1..n]])
@@ -96,13 +92,10 @@ expmod a x m
   | even x =
     let p = (expmod a (mod (div x 2) m) m)
                             in  mod (p^2) m
-  | otherwise = mod (a * expmod a (x-1) m)  m 
-
-        
+  | otherwise = mod (a * expmod a (x-1) m)  m         
 
 --Ex6
 --Factorial sums
-
 sumsg :: Integer -> Integer
 sumsg n = sum (map sg [1..n])
       where
