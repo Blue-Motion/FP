@@ -123,8 +123,6 @@ isPalindrome n = show n == (reverse . show) n
 
 This solution relies heavily on the implementation of the function listPrimes. This is covered in the first lab exercise. However, we did not manage to create a version of listPrimes that is faster than the naive one. Thus the speed of our numberOfPalindromicComposites does not meet the requirements.
 
-\subsection{Proof}
-Runtime:
 
 \section{Last n digits}
 \subsection{Problem}
@@ -154,7 +152,10 @@ expmod a x m
 \end{lstlisting}
 
 \subsection{Proof}
-Runtime:
+We used the function expmod from the website haskell.org, expmod calculates $a^x\: (mod\: m)$.\\ 
+The function nsum sums the numbers for $a^x\: (mod\: m)$. The last d numbers will be transformed into a list of digits using drop and and substract. For the function toDigits, see the Helper Function chapter.\\
+\\ 
+Runtime: 4.81 s
 
 \section{Factorial Sum}
 \subsection{Problem}
@@ -186,8 +187,7 @@ fac n = foldr (*) 1 [1..n]
 \end{lstlisting}
 
 \subsection{Proof}
-Runtime:
-
+$f\: n$ calculates the sum of the factorials of the digits of n, $toDigits$ is the same function as in exersize 5. \\
 s is a function that takes a function fun as an argument. It takes the digits of the result of this fuctions and sums them.
 
 \section{Helper functions}
