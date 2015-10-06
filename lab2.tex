@@ -69,7 +69,9 @@ multsum n xs = foldr (+) 0 (takeWhile (<n) (multiples xs))
 
 \subsection{Proof}
 
-Mults returns an infinite (ordered) list of multiples of x. Multiples maps this list to a list of inputs and generates the (ordered, infinite) lists for all elements. These lists are then ordered by merging them pairwise trough applying folder on merge. Returning an infinite ordered list of all multiples of the items of the input list, with duplicates removed. Multsum then takes as much elements as needed and computes the sum of the taken elements.
+Mults returns an infinite (ordered) list of multiples of x. Multiples maps this list to a list of inputs and generates the (ordered, infinite) lists for all elements. These lists are then ordered by merging them pairwise trough applying folder on merge. Returning an infinite ordered list of all multiples of the items of the input list, with duplicates removed. Multsum then takes as much elements as needed and computes the sum of the taken elements.\\
+\\
+Runtime: 1.78 s
 
 \section{Distinct powers}
 \subsection{Problem}
