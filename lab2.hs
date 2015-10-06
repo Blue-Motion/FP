@@ -109,6 +109,7 @@ fac :: Integer -> Integer
 fac n = foldr (*) 1 [1..n]
 
 --Ex7
+-- using string representation isnt that good idea to solve this problem.
 --Repetitive reciprocals
 maxRepRec :: Integer -> Integer -> Integer
 maxRepRec m n = 0
