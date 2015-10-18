@@ -103,3 +103,4 @@ ord1 a p
 --oddPspTO2 a upb = [n | n <- [3,5..upb],  ]
 
  
+
