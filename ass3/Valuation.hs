@@ -1,4 +1,4 @@
-module Valuation(Valuation) where
+module Valuation where
 
 import Types
 --import Data.List

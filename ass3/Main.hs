@@ -4,6 +4,7 @@ import Data.List
 
 import Compare
 import Expression
+import Valuation
 
 --Couldn't get split(on) to work
 
@@ -16,7 +17,7 @@ readInput = do input <- hGetContents stdin
 
 main :: IO ()
 main = do input <- readInput
-          putStrLn ( (show . parseCSPitem . takeCSPitems . splitCSP) input)
+          putStrLn ( (show . solution . parseCSPitem . takeCSPitems . splitCSP) input)
           return ()
 
 splitCSP :: String -> (String, String)
@@ -33,3 +34,6 @@ varDomain s = (takeWhile isAlpha s,[(read (takeWhile (isDigit) (dropWhile (not.i
 
 parseCSPitem :: ([String],[String]) -> ([(Name,Domain)],[Comparison])
 parseCSPitem (a,b) = (map varDomain a, map toComparison b)
+
+solution :: ([(Name,Domain)],[Comparison]) -> [Valuation]
+solution (v,c) = [x | x <- valuations v, (foldr (&&) True [evalCmp cmp x | cmp <- c]) == True]
