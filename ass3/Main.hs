@@ -7,6 +7,7 @@ import Expression
 import Valuation
 
 --Couldn't get split(on) to work
+--doesn't do any error handling..
 
 removeWhiteSpace :: String -> String
 removeWhiteSpace s = filter (not.isSpace) s
@@ -36,4 +37,4 @@ parseCSPitem :: ([String],[String]) -> ([(Name,Domain)],[Comparison])
 parseCSPitem (a,b) = (map varDomain a, map toComparison b)
 
 solution :: ([(Name,Domain)],[Comparison]) -> [Valuation]
-solution (v,c) = [x | x <- valuations v, (foldr (&&) True [evalCmp cmp x | cmp <- c]) == True]
+solution (v,c) = [x | x <- valuations v, (foldr (&&) True [evalCmp cmp x | cmp <- c])]
