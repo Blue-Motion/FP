@@ -2,6 +2,7 @@ import Data.Char
 import System.IO
 import Data.List
 
+import Compare
 import Expression
 
 --Couldn't get split(on) to work
@@ -15,7 +16,7 @@ readInput = do input <- hGetContents stdin
 
 main :: IO ()
 main = do input <- readInput
-          putStrLn ( (show . takeCSPitems . splitCSP) input)
+          putStrLn ( (show . parseCSPitem . takeCSPitems . splitCSP) input)
           return ()
 
 splitCSP :: String -> (String, String)
@@ -27,3 +28,8 @@ takeCSPitems (d,c) = (addItem d (numCSPitems d), addItem c (numCSPitems c))
         addItem ds n = (takeWhile (/= ',') ds):(addItem (tail (dropWhile (/= ',') ds))) (n-1)
         numCSPitems ds = length (filter (== ',') ds) + 1
 
+varDomain :: String -> (Name,Domain)
+varDomain s = (takeWhile isAlpha s,[(read (takeWhile (isDigit) (dropWhile (not.isDigit) s)))..(read ((reverse . (takeWhile isDigit) . tail . reverse)  s ))])
+
+parseCSPitem :: ([String],[String]) -> ([(Name,Domain)],[Comparison])
+parseCSPitem (a,b) = (map varDomain a, map toComparison b)
