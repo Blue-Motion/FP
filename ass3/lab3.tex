@@ -41,6 +41,7 @@ instance Show Expr where
 \end{lstlisting}
 
 \subsection{}
+The nub function removes duplicate elements from a list. In particular, it keeps only the first occurrence of each element. For sorting the list we used of course the function sort. 
 \begin{lstlisting}
 vars :: Expr -> [Name]
 vars = nub . sort . var
@@ -79,6 +80,8 @@ evalExpr e v
 \end{lstlisting}
 
 \subsection{}
+Given the lecture slides, it is quit easy to create our own parser. 
+
 \begin{lstlisting}
 lexer :: String -> [String]
 lexer [] = []
@@ -129,4 +132,7 @@ parseF (tok:tokens)
 toExpr :: String -> Expr
 toExpr str = fst (parser str)
 \end{lstlisting}
+
+\subsection{}
+We have put all related code in the moduel Expression. We exported the following functions to export: Expr, vars, evalExpr, toExpr. These functions are used in the other modules. The parse function is not used in other modules.
 \end{document}
