@@ -30,6 +30,7 @@
 \section{Integer Expressions}
 
 \subsection{}
+Since we are using our own types, Haskell does not know how to show them. So we tell the compiler how to show our type Expression. We use String to represent a variable and Integer to represent a Value. Haskell does know how to do that, so we just let is show the value. For all Expressions involving an operator, we define the string representation of the operator.
 \begin{lstlisting}
 instance Show Expr where
   show (Val a) = show a
@@ -42,7 +43,7 @@ instance Show Expr where
 \end{lstlisting}
 
 \subsection{}
-We don't care about the exact way and complexity of the sorting and duplicate removal, since there are typically only a handful of variables
+The nub function removes duplicate elements from a list. In particular, it keeps only the first occurrence of each element. For sorting the list we used of course the function sort. We don't care about the exact way and complexity of the sorting and duplicate removal, since there are typically only a handful of variables
 
 \begin{lstlisting}
 vars :: Expr -> [Name]
@@ -59,6 +60,7 @@ vars = nub . sort . var
 \end{lstlisting}
 
 \subsection{}
+We are using list comprehension for $var$ and each value in the given range. This is done for each $var$.
 \begin{lstlisting}
 valuations :: [(Name,Domain)] -> [Valuation]
 valuations [] = []
