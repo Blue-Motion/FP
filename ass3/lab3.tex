@@ -135,7 +135,7 @@ toExpr str = fst (parser str)
 \end{lstlisting}
 
 \subsection{}
-We have put all related code in the moduel Expression. We exported the following functions to export: Expr, vars, evalExpr, toExpr. These functions are used in the other modules. The parse function is not used in other modules.
+We have put all related code in the module Expression. We exported the following functions to export: Expr, vars, evalExpr, toExpr. These functions are used in the other modules. The parse function is not used in other modules.
 
 \subsection{Bonus}
 \begin{lstlisting}
@@ -168,6 +168,11 @@ simplifyExpr a = a
  already know how to parse an expression, so we only need to find a way to 
  get the operator.
  \begin{lstlisting}
+getComparator:: [Char] -> [Char]
+getComparator str = (reverse (dropWhile (not.(\x -> elem x "<>=#")) (reverse (dropWhile (not.(\x -> elem x "<>=#")) str))))
+ \end{lstlisting}
+ 
+ \begin{lstlisting}
  toComparison :: String -> Comparison
  toComparison str = Cmp (comparisonOperator (getComparator str)) 
  (toExpr(expression str)) (toExpr((reverse . expression . reverse ) str))
@@ -175,7 +180,7 @@ simplifyExpr a = a
  
  \subsection{Evaluating Comparisons}
  
- Now that we hve parsed the comparisons, we can evaluate them. This is done 
+ Now that we have parsed the comparisons, we can evaluate them. This is done 
  by pattern matching. We evaluate both expressions, filling in the Valuation 
  for the different variables. Then, we match the provided operator and 
  return whether the comparison, with this values is valid or not.
@@ -198,11 +203,11 @@ simplifyExpr a = a
  
  By now, we can evaluate single comparisons, based on single values. 
  However, the csp contains a textual representation of ranges for different 
- variables, as well as multiple comprisons that should all be true. All this 
+ variables, as well as multiple comparisons that should all be true. All this 
  represented as a file, which we read as 1 String.
  
  The first step (removing whitespace) is given. We proceed with separating 
- domains string and the contraints string and give a tuple containting both 
+ domains string and the constraints  string and give a tuple containing  both 
  as a result.
  
 \begin{lstlisting}
@@ -220,7 +225,7 @@ splitCSP :: String -> (String, String)
 splitCSP s = ((takeWhile (/= '}') (tail (dropWhile (/= '{') s))) , (takeWhile (/= '}') (tail (dropWhile (/= '{') (tail (dropWhile (/= '{') s))))))
 \end{lstlisting}
  
- Now we can parse the valuations and comparison. For comparisons we use the already built toCompare, so we just need something for the value domains. Luckily, variable names contain only alphanumeric characters and domain constraint (obviously) only integers, so we basically throw the rest away by using isAlpha and isNumeric, and build a (Name,Domain) tuple from the information
+ Now we can parse the valuations and comparison. For comparisons we use the already built toCompare, so we just need something for the value domains. Luckily, variable names contain only alphanumeric characters and domain constraint (obviously) only integers, so we basically throw the rest away by using isAlpha and isNumeric, and build a (Name,Domain) tuple from the information.
  
 \begin{lstlisting}
 varDomain :: String -> (Name,Domain)
