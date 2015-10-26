@@ -42,7 +42,8 @@ instance Show Expr where
 \end{lstlisting}
 
 \subsection{}
-The nub function removes duplicate elements from a list. In particular, it keeps only the first occurrence of each element. For sorting the list we used of course the function sort. 
+We don't care about the exact way and complexity of the sorting and duplicate removal, since there are typically only a handful of variables
+
 \begin{lstlisting}
 vars :: Expr -> [Name]
 vars = nub . sort . var
@@ -81,7 +82,7 @@ evalExpr e v
 \end{lstlisting}
 
 \subsection{}
-Given the lecture slides, it is quit easy to create our own parser. 
+Given the lecture slides, it is quite easy to create our own parser. 
 
 \begin{lstlisting}
 lexer :: String -> [String]
