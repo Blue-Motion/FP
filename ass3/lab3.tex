@@ -28,6 +28,7 @@
   \maketitle
 
 \section{Integer Expressions}
+
 \subsection{}
 \begin{lstlisting}
 instance Show Expr where
@@ -136,6 +137,23 @@ toExpr str = fst (parser str)
 \subsection{}
 We have put all related code in the moduel Expression. We exported the following functions to export: Expr, vars, evalExpr, toExpr. These functions are used in the other modules. The parse function is not used in other modules.
 
+\subsection{Bonus}
+\begin{lstlisting}
+simplifyExpr :: Expr -> Expr
+simplifyExpr ((Val a) :+: (Val b)) = Val (a + b)
+simplifyExpr ((Val a) :-: (Val b)) = Val (a - b)
+simplifyExpr ((Val a) :*: (Val b)) = Val (a * b)
+simplifyExpr ((Val a) :/: (Val b)) = Val (div a b)
+simplifyExpr ((Val a) :%: (Val b)) = Val (mod a b)
+simplifyExpr (a :+: b) = (a + simplifyExpr b)
+simplifyExpr (a :-: b) = (a - simplifyExpr b)
+simplifyExpr (a :*: b) = (a * simplifyExpr b)
+--simplifyExpr (a :/: b) = simplifyExpr (mod (simplifyExpr a) (simplifyExpr b))
+--simplifyExpr (a :%: b) = simplifyExpr (mod (simplifyExpr a) (simplifyExpr b))
+simplifyExpr a = a
+
+\end{lstlisting}
+
 \section{Solving a CSP}
 
 A Constraint Satisfaction Problem (CSP) is a set constraints on variables,  where we seek the combination of variable values (within a domain) for which all equations in the set are true. In our case, all constraints are equations in the form of Expr Operator Expr. Represented in the input as a string. 
@@ -143,13 +161,31 @@ A Constraint Satisfaction Problem (CSP) is a set constraints on variables,  wher
 \subsection{toComparison}
 
 To evaluate these constraints, we need to parse the constraint string. We already know how to parse an expression, so we only need to find a way to get the operator.
+
+\begin{lstlisting}
+comparisonOperator :: [Char] -> Relop
+comparisonOperator "<" = LessThan
+comparisonOperator "<=" = LessEqual
+comparisonOperator "=" = Equal
+comparisonOperator ">" = Greater
+comparisonOperator ">=" = GreaterEqual
+comparisonOperator "#" = NotEqual
+
+expression :: [Char] -> [Char]
+expression str = takeWhile (not.(\x -> elem x "<>=#")) str
+
+getComparator:: [Char] -> [Char]
+getComparator str = (reverse (dropWhile (not.(\x -> elem x "<>=#")) (reverse (dropWhile (not.(\x -> elem x "<>=#")) str))))
+
+\end{lstlisting}
+
 \begin{lstlisting}
 toComparison :: String -> Comparison
 toComparison str = Cmp (comparisonOperator (getComparator str)) (toExpr(expression str)) (toExpr((reverse . expression . reverse ) str))
 \end{lstlisting}
 
 \subsection{Evaluating Comparisons}
-
+	
 Now that we hve parsed the comparisons, we can evaluate them. This is done by pattern matching. We evaluate both expressions, filling in the Valuation for the different variables. Then, we match the provided operator and return whether the comparison, with this values is valid or not.
 \begin{lstlisting}
 evalCmp :: Comparison -> Valuation -> Bool
@@ -165,4 +201,25 @@ evalCmp (Cmp NotEqual expression1 expression2) xs = (evalExpr expression1 xs) /=
 By now, we can evaluate single comparisons, based on single values. However, the csp contains a textual representation of ranges for different variables, as well as multiple comprisons that should all be true. All this represented as a file, which we read as 1 String.
 
 The first step (removing whitespace) is given. We proceed with separating domans string and the contraints string and give a tuple containting both as a result
+
+
+\begin{lstlisting}
+splitCSP :: String -> (String, String)
+splitCSP s = ((takeWhile (/= '}') (tail (dropWhile (/= '{') s))) , (takeWhile (/= '}') (tail (dropWhile (/= '{') (tail (dropWhile (/= '{') s))))))
+
+takeCSPitems :: (String,String) -> ([String],[String])
+takeCSPitems (d,c) = (addItem d (numCSPitems d), addItem c (numCSPitems c))
+  where addItem _ 0 = []
+        addItem ds n = (takeWhile (/= ',') ds):(addItem (tail (dropWhile (/= ',') ds))) (n-1)
+        numCSPitems ds = length (filter (== ',') ds) + 1
+
+varDomain :: String -> (Name,Domain)
+varDomain s = (takeWhile isAlpha s,[(read (takeWhile (isDigit) (dropWhile (not.isDigit) s)))..(read ((reverse . (takeWhile isDigit) . tail . reverse)  s ))])
+
+parseCSPitem :: ([String],[String]) -> ([(Name,Domain)],[Comparison])
+parseCSPitem (a,b) = (map varDomain a, map toComparison b)
+
+solution :: ([(Name,Domain)],[Comparison]) -> [Valuation]
+solution (v,c) = [x | x <- valuations v, (foldr (&&) True [evalCmp cmp x | cmp <- c]) == True]
+\end{lstlisting}
 \end{document}
