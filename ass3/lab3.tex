@@ -135,4 +135,34 @@ toExpr str = fst (parser str)
 
 \subsection{}
 We have put all related code in the moduel Expression. We exported the following functions to export: Expr, vars, evalExpr, toExpr. These functions are used in the other modules. The parse function is not used in other modules.
+
+\section{Solving a CSP}
+
+A Constraint Satisfaction Problem (CSP) is a set constraints on variables,  where we seek the combination of variable values (within a domain) for which all equations in the set are true. In our case, all constraints are equations in the form of Expr Operator Expr. Represented in the input as a string. 
+
+\subsection{toComparison}
+
+To evaluate these constraints, we need to parse the constraint string. We already know how to parse an expression, so we only need to find a way to get the operator.
+\begin{lstlisting}
+toComparison :: String -> Comparison
+toComparison str = Cmp (comparisonOperator (getComparator str)) (toExpr(expression str)) (toExpr((reverse . expression . reverse ) str))
+\end{lstlisting}
+
+\subsection{Evaluating Comparisons}
+
+Now that we hve parsed the comparisons, we can evaluate them. This is done by pattern matching. We evaluate both expressions, filling in the Valuation for the different variables. Then, we match the provided operator and return whether the comparison, with this values is valid or not.
+\begin{lstlisting}
+evalCmp :: Comparison -> Valuation -> Bool
+evalCmp (Cmp LessThan expression1 expression2) xs = (evalExpr expression1 xs) < (evalExpr expression2 xs)
+evalCmp (Cmp LessEqual expression1 expression2) xs = (evalExpr expression1 xs) <= (evalExpr expression2 xs)
+evalCmp (Cmp Equal expression1 expression2) xs 	= (evalExpr expression1 xs) == (evalExpr expression2 xs)
+evalCmp (Cmp Greater expression1 expression2) xs = (evalExpr expression1 xs) > 	(evalExpr expression2 xs)
+evalCmp (Cmp GreaterEqual expression1 expression2) xs= (evalExpr expression1 xs) >= (evalExpr expression2 xs)
+evalCmp (Cmp NotEqual expression1 expression2) xs = (evalExpr expression1 xs) /= (evalExpr expression2 xs)
+\end{lstlisting}
+\subsection{solving a CSP}
+
+By now, we can evaluate single comparisons, based on single values. However, the csp contains a textual representation of ranges for different variables, as well as multiple comprisons that should all be true. All this represented as a file, which we read as 1 String.
+
+The first step (removing whitespace) is given. We proceed with separating domans string and the contraints string and give a tuple containting both as a result
 \end{document}
